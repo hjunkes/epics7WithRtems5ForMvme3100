@@ -38,8 +38,9 @@ extern void *POSIX_Init(void *argument);
 #define CONFIGURE_FILESYSTEM_NFS
 #define CONFIGURE_FILESYSTEM_IMFS
 
-#ifndef RTEMS_LEGACY_STACK
 #define CONFIGURE_USE_IMFS_AS_BASE_FILESYSTEM
+
+#ifndef RTEMS_LEGACY_STACK
 /*
  * Configure LibBSD.
  */
@@ -55,17 +56,32 @@ extern void *POSIX_Init(void *argument);
 /*
  * Configure RTEMS.
  */
+#define CONFIGURE_MAXIMUM_DRIVERS 40
+// in bspstart ....#define CONFIGURE_APPLICATION_PREREQUISITE_DRIVERS RTEMS_LIBI2C_DRIVER_TABLE_ENTRY
+
+#define CONFIGURE_APPLICATION_NEEDS_SIMPLE_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
-#define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
-#define CONFIGURE_APPLICATION_NEEDS_STUB_DRIVER
-#define CONFIGURE_APPLICATION_NEEDS_ZERO_DRIVER
+//#define CONFIGURE_APPLICATION_NEEDS_STUB_DRIVER
+//#define CONFIGURE_APPLICATION_NEEDS_ZERO_DRIVER
+//#include <libchip/rtc.h>
+//#define CONFIGURE_APPLICATION_EXTRA_DRIVERS RTC_Table
+/*
+ * This should be made BSP dependent, not CPU dependent but I know of no
+ * appropriate conditionals to use.
+ * The new general time support makes including the RTC driver less important.
+ */
+#if !defined(mpc604) && !defined(__mc68040__) && !defined(__mcf5200__) && \
+    !defined(mpc7455) && !defined(__arm__)  && !defined(__nios2__)
+    /* don't have RTC code */
+//#define CONFIGURE_APPLICATION_NEEDS_RTC_DRIVER
+#endif
 
 /* Max FDs cannot exceed FD_SETSIZE from newlib (64) */
 #define CONFIGURE_MAXIMUM_FILE_DESCRIPTORS 64
-#define CONFIGURE_IMFS_ENABLE_MKFIFO    2
+#define CONFIGURE_IMFS_ENABLE_MKFIFO   10 
 
 #define CONFIGURE_MAXIMUM_NFS_MOUNTS 		3
-#define CONFIGURE_MAXIMUM_USER_EXTENSIONS 	5
+#define CONFIGURE_MAXIMUM_USER_EXTENSIONS 	8
 
 #define CONFIGURE_UNLIMITED_ALLOCATION_SIZE 32
 #define CONFIGURE_UNLIMITED_OBJECTS
@@ -79,20 +95,23 @@ extern void *POSIX_Init(void *argument);
 #define CONFIGURE_BDBUF_CACHE_MEMORY_SIZE (1 * 1024 * 1024)
 
 /* we are using POSIX_INIT needed by V4
-#define CONFIGURE_RTEMS_INIT_TASKS_TABLE
-#define CONFIGURE_INIT_TASK_STACK_SIZE (32 * 1024)
-#define CONFIGURE_INIT_TASK_INITIAL_MODES RTEMS_DEFAULT_MODES
-#define CONFIGURE_INIT_TASK_ATTRIBUTES RTEMS_FLOATING_POINT
+//#define CONFIGURE_RTEMS_INIT_TASKS_TABLE
+//#define CONFIGURE_INIT_TASK_STACK_SIZE (32 * 1024)
+//#define CONFIGURE_INIT_TASK_INITIAL_MODES RTEMS_DEFAULT_MODES
+//#define CONFIGURE_INIT_TASK_ATTRIBUTES RTEMS_FLOATING_POINT
 #endif
 */
 
+#define CONFIGURE_VERBOSE_SYSTEM_INITIALIZATION
+
 //#define RTEMS_PCI_CONFIG_LIB
-//#define CONFIGURE_PCI_LIB PCI_LIB_AUTO
+#define CONFIGURE_PCI_LIB PCI_LIB_AUTO
 
 #if __RTEMS_MAJOR__ > 4
 #define CONFIGURE_SHELL_COMMANDS_INIT
 
 #include <bsp/irq-info.h>
+//#include <rtems/libi2c.h>
 
 #ifndef RTEMS_LEGACY_STACK
 #include <rtems/netcmds-config.h>
@@ -143,23 +162,10 @@ extern void *POSIX_Init(void *argument);
 #define RTEMS_BSD_CONFIG_FIREWALL_PF
 #else
 #include <rtems/shellconfig.h>
-#endif // not LEGACY_STACK
+#endif // < RTEMS 5 
 
 #if __RTEMS_MAJOR__ < 5 // still needed in Version 4?
 #define CONFIGURE_MAXIMUM_TASKS             rtems_resource_unlimited(30)
-#endif
-
-#define CONFIGURE_MAXIMUM_DRIVERS 40
-
-/*
- * This should be made BSP dependent, not CPU dependent but I know of no
- * appropriate conditionals to use.
- * The new general time support makes including the RTC driver less important.
- */
-#if !defined(mpc604) && !defined(__mc68040__) && !defined(__mcf5200__) && \
-    !defined(mpc7455) && !defined(__arm__)  && !defined(__nios2__)
-    /* don't have RTC code */
-#define CONFIGURE_APPLICATION_NEEDS_RTC_DRIVER
 #endif
 
 #if defined(BSP_pc386) || defined(BSP_pc686)
