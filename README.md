@@ -48,3 +48,15 @@ The console does not yet work with the MVME3100 neither with SIMPLE_CONSOLE nor 
  #seq(sncExample, "user=junkes")
  DYCRVME>
 ```
+
+# Update Wedneday late Afternoon
+
+Unfortunately I found another problem and nothing works now after I fixed it :-(
+
+ __RTEMS_MAJOR__ is not defined to "5", I had to add
+ 
+ OP_SYS_INCLUDE_CPPFLAGS += -include $(RTEMS_TOOLS)/powerpc-rtems5/mvme3100/lib/include/rtems/score/cpuopts.h
+ 
+ to configure/os/CONFIG.Common.RTEMS-mvme3100
+ 
+ (Sorry have to leave ...)
