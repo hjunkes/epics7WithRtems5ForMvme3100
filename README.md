@@ -60,3 +60,11 @@ Unfortunately I found another problem and nothing works now after I fixed it :-(
  to configure/os/CONFIG.Common.RTEMS-mvme3100
  
  (Sorry have to leave ...)
+ 
+ # Update Thursday
+ 
+ Everything runs again as before without the modification to CONFIG.Common.RTEMS-mvme3100.
+ `__RTEMS_MAJOR__` is defined as before???
+ 
+ telnet access works, but console doesn't...
+ 
