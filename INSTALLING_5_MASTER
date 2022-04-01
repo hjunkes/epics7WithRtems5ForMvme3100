@@ -5,69 +5,23 @@ export RTEMS_VERSION=5
 export RTEMS_ROOT=/home/junkes/MVME3100_REL/rtems/${RTEMS_VERSION}
 export RTEMS_ARCH=powerpc-rtems${RTEMS_VERSION}
 
-git clone https://github.com/RTEMS/rtems-source-builder.git rsb
-cd rsb
-git checkout ${RTEMS_VERSION}
+#git clone https://github.com/RTEMS/rtems-source-builder.git rsb
+#cd rsb
+#git checkout ${RTEMS_VERSION}
  
-cd rtems
-../source-builder/sb-set-builder \
-  --prefix=${RTEMS_ROOT} \
-  ${RTEMS_VERSION}/rtems-powerpc
+#cd rtems
+#../source-builder/sb-set-builder \
+#  --prefix=${RTEMS_ROOT} \
+#  ${RTEMS_VERSION}/rtems-powerpc
 
-cd ../..
+#cd ../..
 
 export PATH=${RTEMS_ROOT}/bin:${PATH}
 
 git clone git://git.rtems.org/rtems.git kernel
 cd kernel
-git checkout $(RTEMS_VERSION)
-
-patch -p1 << PATCH 
-diff --git a/bsps/powerpc/mvme3100/start/bspstart.c b/bsps/powerpc/mvme3100/start/bspstart.c
-index 0ec215e33b..6888f653b9 100644
---- a/bsps/powerpc/mvme3100/start/bspstart.c
-+++ b/bsps/powerpc/mvme3100/start/bspstart.c
-@@ -52,6 +52,8 @@
- extern unsigned long __rtems_end[];
- extern unsigned      ppc_exc_lock_std, ppc_exc_gpr3_std;
- 
-+extern bool _IO_All_drivers_initialized;
-+
- /*
-  * Copy Additional boot param passed by boot loader
-  */
-@@ -419,7 +421,15 @@ void bsp_start( void )
- 
- static void mvme3100_i2c_initialize(void)
- {
-+  printk("-------- call BSP_i2c_initialize() with _IO_All_drivers_initialized = true\n");
-+  printk("assumes that major 0 is assigned to i2c ---------\n");
-+  /*
-+   * we need the drivers registered as they appear, due to get
-+   * the i2c devices ready
-+   */
-+  _IO_All_drivers_initialized = true; 
-   BSP_i2c_initialize();
-+  _IO_All_drivers_initialized = false; 
- }
- 
- RTEMS_SYSINIT_ITEM(
-diff --git a/cpukit/sapi/src/io.c b/cpukit/sapi/src/io.c
-index 63b784e723..dafc0bb1f9 100644
---- a/cpukit/sapi/src/io.c
-+++ b/cpukit/sapi/src/io.c
-@@ -29,6 +29,8 @@ void _IO_Initialize_all_drivers( void )
- 
-    _IO_All_drivers_initialized = true;
- 
--   for ( major=0 ; major < _IO_Number_of_drivers ; major ++ )
-+   /* i2c driver already initialized with major == 0 */
-+   printk(" _IO_Initialize_all_drivers starts from major=1 !!!\n");
-+   for ( major=1 ; major < _IO_Number_of_drivers ; major ++ )
-      (void) rtems_io_initialize( major, 0, NULL );
- }
-PATCH 
-
+git checkout ${RTEMS_VERSION}
+patch -p1 <../kernel.patch 
 ./bootstrap -c && ./rtems-bootstrap
 
 cd ..

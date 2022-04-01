@@ -945,12 +945,10 @@ POSIX_Init ( void *argument __attribute__((unused)))
      * It is very likely that other time synchronization facilities in EPICS
      * will soon override this value.
      */
-    /* check for RTC ... unfortunately seems to be missing with libbsd and qemu ?
-    if (checkRealtime() >= 0) {
+    /* check for RTC ... unfortunately seems to be missing with libbsd and qemu ? */
+    if (checkRealTime() >= 0) {
       setRealTimeToRTEMS();
-    } else
-    */
-    {
+    } else {
       // set time to 14.4.2014
       now.tv_sec = 1397460606;
       now.tv_nsec = 0;
@@ -1142,9 +1140,9 @@ POSIX_Init ( void *argument __attribute__((unused)))
      */
 #if __RTEMS_MAJOR__>4
     // if telnetd is requested ...
-   // printf(" Will try to start telnetd with prio %d ...\n", rtems_telnetd_config.priority);
-   // result = rtems_telnetd_initialize();
-   // printf (" telnetd initialized with result %d\n", result);
+   printf(" Will try to start telnetd with prio %d ...\n", rtems_telnetd_config.priority);
+   result = rtems_telnetd_initialize();
+   printf (" telnetd initialized with result %d\n", result);
 #endif
 
     printf ("***** Preparing EPICS application *****\n");

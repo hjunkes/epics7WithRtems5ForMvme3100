@@ -56,15 +56,16 @@ extern void *POSIX_Init(void *argument);
 /*
  * Configure RTEMS.
  */
-#define CONFIGURE_MAXIMUM_DRIVERS 40
+#define CONFIGURE_MAXIMUM_DRIVERS 20
 // in bspstart ....#define CONFIGURE_APPLICATION_PREREQUISITE_DRIVERS RTEMS_LIBI2C_DRIVER_TABLE_ENTRY
 
-#define CONFIGURE_APPLICATION_NEEDS_SIMPLE_CONSOLE_DRIVER
+#define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
-//#define CONFIGURE_APPLICATION_NEEDS_STUB_DRIVER
-//#define CONFIGURE_APPLICATION_NEEDS_ZERO_DRIVER
-//#include <libchip/rtc.h>
-//#define CONFIGURE_APPLICATION_EXTRA_DRIVERS RTC_Table
+#define CONFIGURE_APPLICATION_NEEDS_STUB_DRIVER
+#define CONFIGURE_APPLICATION_NEEDS_ZERO_DRIVER
+/*#include <libchip/rtc.h>
+#define CONFIGURE_APPLICATION_EXTRA_DRIVERS RTC_Table
+*/
 /*
  * This should be made BSP dependent, not CPU dependent but I know of no
  * appropriate conditionals to use.
@@ -111,7 +112,6 @@ extern void *POSIX_Init(void *argument);
 #define CONFIGURE_SHELL_COMMANDS_INIT
 
 #include <bsp/irq-info.h>
-//#include <rtems/libi2c.h>
 
 #ifndef RTEMS_LEGACY_STACK
 #include <rtems/netcmds-config.h>
