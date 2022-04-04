@@ -1,0 +1,29 @@
+diff --git a/bsps/powerpc/mvme3100/start/bspstart.c b/bsps/powerpc/mvme3100/start/bspstart.c
+index 0ec215e33b..6888f653b9 100644
+--- a/bsps/powerpc/mvme3100/start/bspstart.c
++++ b/bsps/powerpc/mvme3100/start/bspstart.c
+@@ -52,6 +52,8 @@
+ extern unsigned long __rtems_end[];
+ extern unsigned      ppc_exc_lock_std, ppc_exc_gpr3_std;
+ 
++extern bool _IO_All_drivers_initialized;
++
+ /*
+  * Copy Additional boot param passed by boot loader
+  */
+@@ -419,7 +421,15 @@ void bsp_start( void )
+ 
+ static void mvme3100_i2c_initialize(void)
+ {
++  printk("-------- call BSP_i2c_initialize() with _IO_All_drivers_initialized = true\n");
++  printk("assumes that major 0 is assigned to i2c ---------\n");
++  /*
++   * we need the drivers registered as they appear, due to get
++   * the i2c devices ready
++   */
++  _IO_All_drivers_initialized = true; 
+   BSP_i2c_initialize();
++  _IO_All_drivers_initialized = false; 
+ }
+ 
+ RTEMS_SYSINIT_ITEM(
