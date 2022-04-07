@@ -1,5 +1,5 @@
 diff --git a/bsps/powerpc/mvme3100/start/bspstart.c b/bsps/powerpc/mvme3100/start/bspstart.c
-index 0ec215e33b..6888f653b9 100644
+index 0ec215e33b..96d6e2f9cd 100644
 --- a/bsps/powerpc/mvme3100/start/bspstart.c
 +++ b/bsps/powerpc/mvme3100/start/bspstart.c
 @@ -52,6 +52,8 @@
@@ -11,12 +11,11 @@ index 0ec215e33b..6888f653b9 100644
  /*
   * Copy Additional boot param passed by boot loader
   */
-@@ -419,7 +421,15 @@ void bsp_start( void )
+@@ -419,7 +421,14 @@ void bsp_start( void )
  
  static void mvme3100_i2c_initialize(void)
  {
 +  printk("-------- call BSP_i2c_initialize() with _IO_All_drivers_initialized = true\n");
-+  printk("assumes that major 0 is assigned to i2c ---------\n");
 +  /*
 +   * we need the drivers registered as they appear, due to get
 +   * the i2c devices ready
@@ -27,3 +26,17 @@ index 0ec215e33b..6888f653b9 100644
  }
  
  RTEMS_SYSINIT_ITEM(
+diff --git a/c/src/lib/libbsp/powerpc/mvme3100/Makefile.am b/c/src/lib/libbsp/powerpc/mvme3100/Makefile.am
+index 48a61b9329..842cb92d67 100644
+--- a/c/src/lib/libbsp/powerpc/mvme3100/Makefile.am
++++ b/c/src/lib/libbsp/powerpc/mvme3100/Makefile.am
+@@ -43,8 +43,8 @@ librtemsbsp_a_SOURCES += ../../../../../../bsps/powerpc/shared/start/bspgetworka
+ librtemsbsp_a_SOURCES += ../../../../../../bsps/powerpc/shared/start/zerobss.c
+ librtemsbsp_a_SOURCES += ../../../../../../bsps/powerpc/shared/start/sbrk.c
+ librtemsbsp_a_SOURCES += ../../../../../../bsps/shared/dev/getentropy/getentropy-cpucounter.c
+-librtemsbsp_a_SOURCES += ../../../../../../bsps/shared/start/bspfatal-default.c
+ librtemsbsp_a_SOURCES += ../../../../../../bsps/shared/start/bspreset-empty.c
++librtemsbsp_a_SOURCES += ../../../../../../bsps/powerpc/mvme3100/start/bspclean.c
+ # tod
+ librtemsbsp_a_SOURCES += ../../../../../../bsps/shared/dev/rtc/rtc-support.c
+ librtemsbsp_a_SOURCES += ../../../../../../bsps/powerpc/mvme3100/rtc/todcfg.c

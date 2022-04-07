@@ -2,25 +2,26 @@
 
 #RTEMS development
 export RTEMS_VERSION=5
-export RTEMS_ROOT=/home/junkes/MVME3100_REL/rtems/${RTEMS_VERSION}
+export RTEMS_ROOT=/home/rtems/MVME3100/rtems/${RTEMS_VERSION}
 export RTEMS_ARCH=powerpc-rtems${RTEMS_VERSION}
 
-#git clone https://github.com/RTEMS/rtems-source-builder.git rsb
-#cd rsb
-#git checkout ${RTEMS_VERSION}
+git clone https://github.com/RTEMS/rtems-source-builder.git rsb
+cd rsb
+git checkout ${RTEMS_VERSION}
  
-#cd rtems
-#../source-builder/sb-set-builder \
-#  --prefix=${RTEMS_ROOT} \
-#  ${RTEMS_VERSION}/rtems-powerpc
+cd rtems
+../source-builder/sb-set-builder \
+  --prefix=${RTEMS_ROOT} \
+  ${RTEMS_VERSION}/rtems-powerpc
 
-#cd ../..
+cd ../..
 
 export PATH=${RTEMS_ROOT}/bin:${PATH}
 
 git clone git://git.rtems.org/rtems.git kernel
 cd kernel
 git checkout ${RTEMS_VERSION}
+cp ../bspclean.c bsps/powerpc/mvme3100/start/bspclean.c 
 patch -p1 <../kernel.patch 
 ./bootstrap -c && ./rtems-bootstrap
 
